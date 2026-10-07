@@ -60,4 +60,8 @@ Following the project's folder layout guidelines, the repository is structured a
 ## 🧑‍💻 Author
 * **Name:** Syalisa Amani
 * **Course:** RevoU Software Engineering Coding Camp
+<<<<<<< HEAD
 * **Repository Name:** CodingCamp-05October26-Syalisa
+=======
+* **Repository Name:** CodingCamp-05October26-Syalisa
+>>>>>>> f5749ad317aa0604974293381c8903297aa7602c
