@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/png" href="/img/logo.png">
-  <title>To-Do Dashboard</title>
+  <title>TaskiVo - Dashboard</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -12,9 +12,12 @@
   <!-- Header -->
   <header class="site-header" role="banner">
     <div class="header-inner">
-      <div class="header-brand">
-        <img src="img/logo.png" alt="Logo" class="header-logo" />
-        <h1 class="header-title">My To-Do Dashboard</h1>
+      <div class="header-top">
+        <div class="header-brand">
+          <img src="img/logo.png" alt="Logo" class="header-logo" />
+          <h1 class="header-title">TaskiVo Dashboard</h1>
+        </div>
+        <button id="theme-toggle">🌙</button>
       </div>
       <p class="header-subtitle">Stay organised, stay productive.</p>
     </div>
@@ -22,6 +25,48 @@
 
   <!-- Main content -->
   <main class="main-content" id="main">
+
+    <!-- Greeting -->
+     <section class="greeting">
+       <h2 id="greetingText"></h2>
+       <p>Ready to get this done?</p><br>
+       <h4 id="dateTime"></h4>
+     </section>
+
+    <!-- Focus timer -->
+     <section class="focus-timer">
+      <div class="focus-card">
+            <div class="focus-header">
+                <div>
+                    <span class="focus-icon">🎯</span>
+                    <h3>Focus Timer</h3>
+                </div>
+                <span class="focus-label">Focus Session</span>
+            </div>
+
+            <div class="timer-display" id="timer">
+                25:00
+            </div>
+
+            <div class="timer-status" id="timer-status">
+                Ready to focus?
+            </div>
+
+            <div class="timer-buttons">
+                <button id="start-timer" class="timer-btn start">
+                    Start
+                </button>
+
+                <button id="stop-timer" class="timer-btn stop">
+                    Stop
+                </button>
+
+                <button id="reset-timer" class="timer-btn reset">
+                    ↻
+                </button>
+            </div>
+        </div>
+     </section>
 
     <!-- Add task form -->
     <section class="add-task-section" aria-label="Add a new task">
@@ -39,7 +84,7 @@
             autocomplete="off"
           />
           <button id="add-btn" class="btn btn-primary" aria-label="Add task">
-            + Add
+            Add
           </button>
         </div>
         <div class="input-row">
@@ -74,6 +119,15 @@
       <button id="clear-completed-btn" class="btn btn-danger" aria-label="Clear all completed tasks">
         Clear Completed
       </button>
+
+      <!-- Sort task -->
+       <div class="sort-container">
+        <select id="sort-tasks">
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+          <option value="az">(A - Z)</option>
+        </select>
+      </div>
     </section>
 
     <!-- Task list -->
@@ -91,11 +145,65 @@
       </div>
     </section>
 
+    <!-- Quick Links -->
+    <section class="quick-links-section" aria-label="Quick links">
+      <div class="quick-links-header">
+        <span class="quick-links-icon">⚡</span>
+        <h3 class="quick-links-title">Quick Links</h3>
+      </div>
+
+      <div id="quick-links-list" class="quick-links-list"></div>
+
+      <form id="quick-link-form" class="quick-link-form">
+        <input
+          type="text"
+          id="quick-link-name"
+          placeholder="Website name"
+          aria-label="Website name"
+          maxlength="40"
+          required
+        >
+
+        <input
+          type="url"
+          id="quick-link-url"
+          placeholder="https://example.com"
+          aria-label="Website URL"
+          required
+        >
+
+        <button type="submit" class="quick-link-add-btn">
+          <span aria-hidden="true">+</span> Add Link
+        </button>
+
+        <p id="quick-link-message" class="quick-link-message" role="status" aria-live="polite"></p>
+      </form>
+    </section>
   </main>
 
   <footer class="site-footer" role="contentinfo">
-    <p>All data saved locally in your browser.</p>
+    <p>RevoU - Coding Camp Software Engineer - Syalisa Amani Fatiha 2026.</p>
   </footer>
+
+  <!-- Edit Task Modal -->
+  <div id="edit-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="modal-title" class="modal-title">Edit Task</h2>
+        <button id="modal-close" class="modal-close" aria-label="Close edit modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label for="edit-title" class="modal-label">Title</label>
+        <input type="text" id="edit-title" class="input-title" maxlength="200" autocomplete="off" />
+        <label for="edit-desc" class="modal-label">Description <span class="modal-optional">(optional)</span></label>
+        <textarea id="edit-desc" class="input-desc" rows="3" maxlength="500"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button id="modal-cancel" class="btn btn-secondary">Cancel</button>
+        <button id="modal-save" class="btn btn-primary">Save Changes</button>
+      </div>
+    </div>
+  </div>
 
   <script src="app.js"></script>
 </body>
