@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/png" href="/img/logo.png">
+  <link rel="icon" type="image/png" href="img/logo.png">
   <title>TaskiVo - Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/CSS/style.css" />
+  <link rel="stylesheet" href="CSS/style.css" />
 </head>
 <body>
 
@@ -36,7 +36,7 @@
        <span id="dateTime"></span>
      </section>
 
-    <section class="dashboard-top-grid" aria-label="Productivity tools">
+    <div class="dashboard-top-grid" aria-label="Productivity tools">
 
     <!-- Focus timer -->
      <section class="focus-timer">
@@ -103,9 +103,10 @@
             maxlength="500"
           ></textarea>
         </div>
+        <p id="task-message" class="task-message" role="status" aria-live="polite"></p>
       </div>
     </section>
-    </section>
+    </div>
 
     <!-- Controls bar -->
     <section class="controls-bar" aria-label="Task filters and summary">
@@ -203,6 +204,7 @@
         <input type="text" id="edit-title" class="input-title" maxlength="200" autocomplete="off" />
         <label for="edit-desc" class="modal-label">Description <span class="modal-optional">(optional)</span></label>
         <textarea id="edit-desc" class="input-desc" rows="3" maxlength="500"></textarea>
+        <p id="modal-message" class="task-message" role="status" aria-live="polite"></p>
       </div>
       <div class="modal-footer">
         <button id="modal-cancel" class="btn btn-secondary">Cancel</button>
@@ -211,6 +213,6 @@
     </div>
   </div>
 
-  <script src="/JS/app.js"></script>
+  <script src="JS/app.js"></script>
 </body>
 </html>

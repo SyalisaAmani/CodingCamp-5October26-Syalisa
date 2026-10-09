@@ -39,6 +39,7 @@ const clearBtn         = document.getElementById('clear-completed-btn');
 const filterBtns       = document.querySelectorAll('.btn-filter');
 const themeToggleBtn   = document.getElementById('theme-toggle');
 const sortSelect       = document.getElementById('sort-tasks');
+const taskMessage      = document.getElementById('task-message');
 
 // Edit Modal
 const editModal        = document.getElementById('edit-modal');
@@ -47,6 +48,7 @@ const editDescInput    = document.getElementById('edit-desc');
 const modalClose       = document.getElementById('modal-close');
 const modalCancel      = document.getElementById('modal-cancel');
 const modalSave        = document.getElementById('modal-save');
+const modalMessage     = document.getElementById('modal-message');
 
 // Focus Timer
 const timerDisplay     = document.getElementById('timer');
@@ -57,70 +59,57 @@ const resetTimerBtn    = document.getElementById('reset-timer');
 
 // ── LocalStorage helpers ─────────────────────────────────────────────────────
 
-// Dark Mode
-const savedTheme = localStorage.getItem('theme');
-if (savedTheme) {
-  document.documentElement.setAttribute('data-theme', savedTheme);
-  themeToggleBtn.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
-}
-
-themeToggleBtn.addEventListener('click', () => {
-  const currentTheme = document.documentElement.getAttribute('data-theme');
-  
-  if (currentTheme === 'dark') {
-    // Light mode change
-    document.documentElement.setAttribute('data-theme', 'light');
-    localStorage.setItem('theme', 'light');
-    themeToggleBtn.textContent = '🌙'; 
-  } else {
-    // Dark Mode change
-    document.documentElement.setAttribute('data-theme', 'dark');
-    localStorage.setItem('theme', 'dark');
-    themeToggleBtn.textContent = '☀️'; 
-  }
-});
-
 // Greeting with time and date
 function updateGreeting() {
-    const now = new Date();
-    const hour = now.getHours();
+  const now = new Date();
+  const hour = now.getHours();
 
-    let greeting;
+  let greeting;
 
-    if (hour >= 5 && hour < 12) {
-        greeting = "Good morning! 👋";
-    } else if (hour >= 12 && hour < 18) {
-        greeting = "Good afternoon! ☀️";
-    } else if (hour >= 18 && hour < 22) {
-        greeting = "Good evening! 🌙";
-    } else {
-        greeting = "Good night! 🌙";
-    }
+  if (hour >= 5 && hour < 12) {
+    greeting = 'Good morning! 👋';
+  } else if (hour >= 12 && hour < 18) {
+    greeting = 'Good afternoon! ☀️';
+  } else if (hour >= 18 && hour < 22) {
+    greeting = 'Good evening! 🌙';
+  } else {
+    greeting = 'Good night! 🌙';
+  }
 
-    const time = now.toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit"
-    });
+  const time = now.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  });
 
-    const date = now.toLocaleDateString("en-US", {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric"
-    });
+  const date = now.toLocaleDateString('en-US', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
 
-    document.getElementById("greetingText").textContent = greeting;
-    document.getElementById("dateTime").textContent =
-        `${time} · ${date}`;
+  document.getElementById('greetingText').textContent = greeting;
+  document.getElementById('dateTime').textContent = `${time} · ${date}`;
 }
 
-updateGreeting();
-
-setInterval(updateGreeting, 1000);
+/**
+ * Show an inline message below the add-task form.
+ * Auto-clears after 3 seconds.
+ * @param {string} text
+ * @param {'error' | 'success'} type
+ */
+function showTaskMessage(text, type) {
+  taskMessage.textContent = text;
+  taskMessage.className = 'task-message task-message--' + type;
+  clearTimeout(taskMessage._timer);
+  taskMessage._timer = setTimeout(() => {
+    taskMessage.textContent = '';
+    taskMessage.className = 'task-message';
+  }, 3000);
+}
 
 /**
- * Load tasks from localStorage.
  * Falls back to an empty array if nothing is stored or JSON is invalid.
  * @returns {Array}
  */
@@ -133,51 +122,44 @@ function loadTasks() {
   }
 }
 
-// Quick Link
+// ── Quick Links ──────────────────────────────────────────────────────────────
+
 function loadQuickLinks() {
-    try {
-        const savedLinks = localStorage.getItem(QUICK_LINKS_KEY);
-
-        if (savedLinks) {
-            return JSON.parse(savedLinks);
-        }
-
-        localStorage.setItem(
-            QUICK_LINKS_KEY,
-            JSON.stringify(defaultQuickLinks)
-        );
-
-        return defaultQuickLinks;
-
-    } catch {
-        return defaultQuickLinks;
+  try {
+    const savedLinks = localStorage.getItem(QUICK_LINKS_KEY);
+    if (savedLinks) {
+      return JSON.parse(savedLinks);
     }
+    localStorage.setItem(QUICK_LINKS_KEY, JSON.stringify(defaultQuickLinks));
+    return defaultQuickLinks;
+  } catch {
+    return defaultQuickLinks;
+  }
 }
 
 function renderQuickLinks() {
-    const links = loadQuickLinks();
+  const links = loadQuickLinks();
+  quickLinksList.innerHTML = '';
 
-    quickLinksList.innerHTML = '';
+  links.forEach(link => {
+    const a = document.createElement('a');
+    a.className = 'quick-link';
+    a.href = link.url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
 
-    links.forEach(link => {
-        const a = document.createElement('a');
-        a.className = 'quick-link';
-        a.href = link.url;
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
+    const iconSpan = document.createElement('span');
+    iconSpan.className = 'quick-link-icon';
+    iconSpan.textContent = link.icon || '🔗';
 
-        const iconSpan = document.createElement('span');
-        iconSpan.className = 'quick-link-icon';
-        iconSpan.textContent = link.icon || '🔗';
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'quick-link-name';
+    nameSpan.textContent = link.name;
 
-        const nameSpan = document.createElement('span');
-        nameSpan.className = 'quick-link-name';
-        nameSpan.textContent = link.name;
-
-        a.appendChild(iconSpan);
-        a.appendChild(nameSpan);
-        quickLinksList.appendChild(a);
-    });
+    a.appendChild(iconSpan);
+    a.appendChild(nameSpan);
+    quickLinksList.appendChild(a);
+  });
 }
 
 function addQuickLink(name, url) {
@@ -222,55 +204,48 @@ let timeLeft = 25 * 60;
 let timerInterval = null;
 
 function updateTimerDisplay() {
-    const minutes = Math.floor(timeLeft / 60);
-    const seconds = timeLeft % 60;
-
-    timerDisplay.textContent =
-        `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+  timerDisplay.textContent =
+    `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
 
 function startTimer() {
-    // Prevent multiple intervals
-    if (timerInterval !== null) return;
+  // Prevent multiple intervals
+  if (timerInterval !== null) return;
 
-    timerStatus.textContent = 'Stay focused... 🎯';
+  timerStatus.textContent = 'Stay focused... 🎯';
 
-    timerInterval = setInterval(() => {
-        if (timeLeft > 0) {
-            timeLeft--;
-            updateTimerDisplay();
-        } else {
-            clearInterval(timerInterval);
-            timerInterval = null;
+  timerInterval = setInterval(() => {
+    if (timeLeft > 0) {
+      timeLeft--;
+      updateTimerDisplay();
+    } else {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      timerStatus.textContent = 'Focus session complete! 🎉';
 
-            timerStatus.textContent = 'Focus session complete! 🎉';
-
-            // Optional: notification
-            if ('Notification' in window && Notification.permission === 'granted') {
-                new Notification('Taskivo Focus Timer', {
-                    body: 'Your 25-minute focus session is complete! 🎉'
-                });
-            }
-        }
-    }, 1000);
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('Taskivo Focus Timer', {
+          body: 'Your 25-minute focus session is complete! 🎉',
+        });
+      }
+    }
+  }, 1000);
 }
 
 function stopTimer() {
-    clearInterval(timerInterval);
-    timerInterval = null;
-
-    timerStatus.textContent = 'Timer paused.';
+  clearInterval(timerInterval);
+  timerInterval = null;
+  timerStatus.textContent = 'Timer paused.';
 }
 
 function resetTimer() {
-    clearInterval(timerInterval);
-    timerInterval = null;
-
-    timeLeft = 25 * 60;
-
-    updateTimerDisplay();
-
-    timerStatus.textContent = 'Ready to focus?';
+  clearInterval(timerInterval);
+  timerInterval = null;
+  timeLeft = 25 * 60;
+  updateTimerDisplay();
+  timerStatus.textContent = 'Ready to focus?';
 }
 
 startTimerBtn.addEventListener('click', startTimer);
@@ -303,10 +278,12 @@ function openEditModal(id) {
 
 /** Close the edit modal and reset state. */
 function closeEditModal() {
-  editModal.hidden  = true;
-  editingTaskId     = null;
+  editModal.hidden = true;
+  editingTaskId = null;
   editTitleInput.value = '';
-  editDescInput.value  = '';
+  editDescInput.value = '';
+  modalMessage.textContent = '';
+  modalMessage.className = 'task-message';
 }
 
 /**
@@ -331,7 +308,8 @@ function saveEdit() {
   );
 
   if (duplicate) {
-    alert('Task already exists.');
+    modalMessage.textContent = 'A task with that title already exists.';
+    modalMessage.className = 'task-message task-message--error';
     editTitleInput.focus();
     return;
   }
@@ -382,25 +360,24 @@ function saveTasks() {
 
 /**
  * Add a new task.
- * @param {string} title
+ * @param {string} title - Already trimmed by the caller.
  * @param {string} description
  */
 function addTask(title, description) {
-  
-  const cleanTitle = title.trim().toLowerCase();
+  const cleanTitle = title.toLowerCase();
 
   const duplicate = tasks.some(task =>
     task.title.trim().toLowerCase() === cleanTitle
   );
 
   if (duplicate) {
-    alert('Task already exists!');
+    showTaskMessage('A task with that title already exists.', 'error');
     return;
   }
 
   const task = {
     id: Date.now().toString(),
-    title: title.trim(),
+    title: title,
     description: description.trim(),
     completed: false,
     createdAt: new Date().toISOString(),
@@ -445,10 +422,7 @@ function clearCompleted() {
 // Sort tasks.
 if (sortSelect) {
   sortSelect.addEventListener('change', (e) => {
-    console.log("Dropdown dipilih:", e.target.value); 
-    
     const sortValue = e.target.value;
-
     if (sortValue === 'newest') {
       tasks.sort((a, b) => b.id - a.id);
     } else if (sortValue === 'oldest') {
@@ -655,8 +629,33 @@ quickLinkForm.addEventListener('submit', event => {
 // ── Initialise ───────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
-    tasks = loadTasks();
+  // ── Theme ────────────────────────────────────────────────────────────────
+  // Apply saved theme before first render to avoid a flash of the wrong theme.
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) {
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    themeToggleBtn.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+  }
 
-    render();
-    renderQuickLinks();
+  themeToggleBtn.addEventListener('click', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    if (currentTheme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'light');
+      localStorage.setItem('theme', 'light');
+      themeToggleBtn.textContent = '🌙';
+    } else {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+      themeToggleBtn.textContent = '☀️';
+    }
+  });
+
+  // ── Initialise ───────────────────────────────────────────────────────────
+  tasks = loadTasks();
+
+  updateGreeting();
+  setInterval(updateGreeting, 1000);
+
+  render();
+  renderQuickLinks();
 });

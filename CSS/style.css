@@ -65,7 +65,6 @@ html { font-size: 16px; scroll-behavior: smooth; }
 body {
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: linear-gradient(160deg, var(--color-bg-from) 0%, var(--color-bg-to) 100%) fixed;
-  background-attachment: fixed;
   color: var(--color-text-primary);
   min-height: 100vh;
   display: flex;
@@ -175,28 +174,9 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
 /* ============================================================
    Dashboard Row — side-by-side layout
    ============================================================ */
-.dashboard-row {
-  display: flex;
-  gap: 1.25rem;
-  align-items: flex-start;
-}
-
-.dashboard-row > .focus-timer { flex: 1; min-width: 0; }
-.dashboard-row > .add-task-section { flex: 1.2; min-width: 0; }
-
-@media (max-width: 700px) {
-  .dashboard-row { flex-direction: column; }
-}
-
-/* Backward compatibility if old class still present */
 .dashboard-top-grid {
   display: flex;
   gap: 1.25rem;
@@ -415,6 +395,21 @@ body {
 }
 
 .btn-danger:hover { background: var(--color-danger-light); }
+
+/* ============================================================
+   Task Message — inline feedback for add/edit errors
+   ============================================================ */
+.task-message {
+  font-size: 0.8rem;
+  font-weight: 500;
+  min-height: 1.2em;
+  transition: opacity var(--transition);
+}
+
+.task-message:empty { display: none; }
+
+.task-message--error  { color: var(--color-danger); }
+.task-message--success { color: var(--color-accent); }
 
 /* ============================================================
    Controls Bar
@@ -698,7 +693,7 @@ body {
   justify-content: center;
   z-index: 1000;
   padding: 1rem;
-  animation: fadeIn 0.15s ease;
+  animation: modalSlideUp 0.2s ease;
 }
 
 .modal-overlay[hidden] { display: none; }
